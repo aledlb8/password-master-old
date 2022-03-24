@@ -13,10 +13,10 @@
 
 # Showcase
 
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364503673618554/unknown.png)
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364503967211520/unknown.png)
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364504348897300/unknown.png)
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364506844495972/unknown.png)
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364507054227546/unknown.png)
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364507427536966/unknown.png)
-[](https://cdn.discordapp.com/attachments/931650810885062686/956364507796615189/unknown.png)
+[auth](https://cdn.discordapp.com/attachments/931650810885062686/956364503673618554/unknown.png)
+[login](https://cdn.discordapp.com/attachments/931650810885062686/956364503967211520/unknown.png)
+[register](https://cdn.discordapp.com/attachments/931650810885062686/956364504348897300/unknown.png)
+[menu](https://cdn.discordapp.com/attachments/931650810885062686/956364506844495972/unknown.png)
+[show](https://cdn.discordapp.com/attachments/931650810885062686/956364507054227546/unknown.png)
+[create](https://cdn.discordapp.com/attachments/931650810885062686/956364507427536966/unknown.png)
+[delete](https://cdn.discordapp.com/attachments/931650810885062686/956364507796615189/unknown.png)
