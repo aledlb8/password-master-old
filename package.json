@@ -1,0 +1,31 @@
+{
+  "name": "password-master",
+  "version": "1.0.0",
+  "description": "Save passwords, note, credit cards the most cool way possible",
+  "main": "index.js",
+  "scripts": {
+    "run": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aledlb8/password-master.git"
+  },
+  "keywords": [
+    "password",
+    "notes",
+    "credit-cards",
+    "save",
+    "secure"
+  ],
+  "author": "aledlb8",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aledlb8/password-master/issues"
+  },
+  "homepage": "https://github.com/aledlb8/password-master#readme",
+  "dependencies": {
+    "cfonts": "^2.10.0",
+    "mongoose": "^6.2.8",
+    "prompt-sync": "^4.2.0"
+  }
+}
