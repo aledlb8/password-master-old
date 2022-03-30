@@ -56,7 +56,7 @@ function main(username) {
 						console.log("\x1b[31m","Title is required","\x1b[0m")
 						redirectToMenu()
 					} else {
-						Passwords.findOne({user: username, title: title}, async(err, data) => {
+						Passwords.findOne({title: title}, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
 								console.log("\x1b[31m","Password not found","\x1b[0m")
@@ -77,7 +77,7 @@ function main(username) {
 						console.log("\x1b[31m","Title is required","\x1b[0m")
 						redirectToMenu()
 					} else {
-						Notes.findOne({user: username, title: title}, async(err, data) => {
+						Notes.findOne({title: title}, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
 								console.log("\x1b[31m","Note not found","\x1b[0m")
@@ -98,7 +98,7 @@ function main(username) {
 						console.log("\x1b[31m","Title is required","\x1b[0m")
 						redirectToMenu()
 					} else {
-						CreditCards.findOne({user: username, title: title}, async(err, data) => {
+						CreditCards.findOne({title: title}, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
 								console.log("\x1b[31m","Credit card not found","\x1b[0m")
@@ -142,7 +142,7 @@ function main(username) {
 						console.log("\x1b[31m","Please fill out all the required files","\x1b[0m")
 						redirectToMenu()
 					} else {
-						Passwords.findOne({ user: username, title: title }, async(err, data) => {
+						Passwords.findOne({title: title }, async(err, data) => {
 							if(err) throw err;
 							if(data) {
 								console.log("\x1b[31m","Title already exist","\x1b[0m")
@@ -173,7 +173,7 @@ function main(username) {
 						console.log("\x1b[31m","Please fill out all the required files","\x1b[0m")
 						redirectToMenu()
 					} else {
-						Notes.findOne({ user: username, title: title }, async(err, data) => {
+						Notes.findOne({title: title }, async(err, data) => {
 							if(err) throw err;
 							if(data) {
 								console.log("\x1b[31m","Title already exist","\x1b[0m")
@@ -203,7 +203,7 @@ function main(username) {
 						console.log("\x1b[31m","Please fill out all the required filess","\x1b[0m")
 						redirectToMenu()
 					} else {
-						CreditCards.findOne({ user: username, title: title }, async(err, data) => {
+						CreditCards.findOne({title: title }, async(err, data) => {
 							if(err) throw err;
 							if(data) {
 								console.log("\x1b[31m","Title already exist","\x1b[0m")
