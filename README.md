@@ -3,7 +3,7 @@
 
 - Requirements? Yes! you need a Mongo database to be able to store your information
 
-# This will also come with a integrated authentication system
+# This also come with a integrated authentication system
 
 > If you have any suggestions let us know in discord or github issues page!
 
