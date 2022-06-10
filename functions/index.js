@@ -1,38 +1,285 @@
 const { Passwords, Notes, CreditCards } = require("../database");
-const { say } = require('cfonts');
 const prompt = require("prompt-sync")({ sigint: true })
+const inquirer = require('inquirer');
+const gradient = require('gradient-string');
+const CFonts = require('cfonts');
+const figlet = require('figlet');
+const { createSpinner } = require('nanospinner');
+const clipboardy = require('clipboardy');
+const chalk = require('chalk');
+
 
 function main(username) {
+	/**
+	 * @Function Password Generator
+	 */
+	function passGen() {
+		let length;
+		let uppercase;
+		let lowercase;
+		let numbers;
+		let symbols;
+		/**
+		 * @Function Welcome
+		 */
+		async function welcome() {
+			CFonts.say('Password Generator', {
+				font: 'block',
+				color: 'cyan',
+				align: 'center',
+				transitionGradient:['blue', 'cyan', 'mangenta' ],
+				gradient: ['blue', 'cyan', 'magenta' ],
+				lineHeight: 1  
+			});
+		}
+		/**
+		 * @Function Handle Answers
+		 */
+		async function handle(success, err) {
+			const spinner = createSpinner('Generating password...').start();
+			await timeout(2000);
+	
+			if (success) {
+				spinner.success({ text: `Success! password has been generated and copied to clipboard.` });
+				redirectToMenu();
+			} else {
+				if (err) {
+					spinner.error({ text: `Error: ${err}` });
+					redirectToMenu();
+				} else {
+					spinner.error({ text: `Uh Oh! an unexpected error has ocurred, please try again later.` });
+					redirectToMenu();
+				}
+			}
+		}
+		/**
+		 * @Function Ask Length
+		 */
+		async function askLength() {
+			const answers = await inquirer.prompt({
+				name: 'password_length',
+				type: 'input',
+				message: 'What is the length of your password?',
+				default() {
+					return '16';
+				},
+			});
+	
+			if (isNaN(answers.password_length)) {
+				console.log(chalk.red('Please enter a number'));
+				await askLength();
+			}
+	
+			length = answers.password_length;
+		}
+		/**
+		 * @Function Ask Upper Case
+		 */
+		async function askUppercase() {
+			const answers = await inquirer.prompt({
+				name: 'uppercase',
+				type: 'input',
+				message: 'Do you want uppercase in the password?',
+				default() {
+					return 'y/n';
+				},
+			});
+			uppercase = answers.uppercase;
+		}
+		/**
+		 * @Function Ask Lower Case
+		 */
+		async function askLowercase() {
+			const answers = await inquirer.prompt({
+				name: 'lowercase',
+				type: 'input',
+				message: 'Do you want lowercase in the password?',
+				default() {
+					return 'y/n';
+				},
+			});
+			lowercase = answers.lowercase;
+		}
+		/**
+		 * @Function Ask Numbers
+		 */
+		async function askNumbers() {
+			const answers = await inquirer.prompt({
+				name: 'numbers',
+				type: 'input',
+				message: 'Do you want numbers in the password?',
+				default() {
+					return 'y/n';
+				},
+			});
+			numbers = answers.numbers;
+		}
+		/**
+		 * @Function Ask Symbols
+		 */
+		async function askSymbols() {
+			const answers = await inquirer.prompt({
+				name: 'symbols',
+				type: 'input',
+				message: 'Do you want symbols in the password?',
+				default() {
+					return 'y/n';
+				},
+			});
+			symbols = answers.symbols;
+		}
+		/**
+		 * @Function Finalize
+		 */
+		function finish() {
+			console.clear();
+			
+			try {
+				figlet(`Password Generated`, (err, data) => {
+					console.log(gradient.pastel.multiline(data) + '\n');
+			
+					let lowercase_pass = 'abcdefghijklmnopqrstuvwxyz';
+					let uppercase_pass = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+					let numbers_pass = '0123456789';
+					let symbols_pass = '!@#$%^&*()+_-=}{[]|:;"/?.><,`~';
+			
+					if(lowercase === "y/n" && uppercase === "y/n" && numbers === "y/n" && symbols === "y/n") return handle(false, "Please select at least one option.")
+			
+					let password = '';
+					if(lowercase === "y" && uppercase === "n" && numbers === "n" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "y" && numbers === "n" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "n" && numbers === "y" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "n" && numbers === "n" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "y" && numbers === "n" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "n" && numbers === "y" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "n" && numbers === "n" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "y" && numbers === "y" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "y" && numbers === "n" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "n" && numbers === "y" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "y" && numbers === "y" && symbols === "n") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "n" && numbers === "y" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "y" && numbers === "n" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "n" && uppercase === "y" && numbers === "y" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else if(lowercase === "y" && uppercase === "y" && numbers === "y" && symbols === "y") {
+						for(let i = 0; i < length; i++) {
+							password += lowercase_pass.charAt(Math.floor(Math.random() * lowercase_pass.length));
+							password += uppercase_pass.charAt(Math.floor(Math.random() * uppercase_pass.length));
+							password += numbers_pass.charAt(Math.floor(Math.random() * numbers_pass.length));
+							password += symbols_pass.charAt(Math.floor(Math.random() * symbols_pass.length));
+						}
+					} else {
+						return handle(false, "An error ocurred while matching your request. Please try again later.");
+					}
+					clipboardy.writeSync(password);
+					handle(true)
+				});
+			}
+			catch(err) {
+				handle(false)
+			}
+		}
+	
+		console.clear();
+		async function password_gen() {
+			await welcome();
+			await askLength();
+			await askUppercase();
+			await askLowercase();
+			await askNumbers();
+			await askSymbols();
+			finish();
+		}
+		password_gen();
+	}
+	/**
+	 * @Function Redirects To Menu
+	 */
+	async function redirectToMenu() {
+		console.log("\x1b[33mRedirecting to menu...\x1b[0m")
+		await timeout(2000);
+		console.clear();
+		main(username)
+	}
+
 	console.clear();
-	say('Password Master', {
+	CFonts.say('Password Master', {
 		font: 'block',
+		color: 'cyan',
 		align: 'center',
-		colors: ['blueBright'],
-		background: 'transparent',
-		letterSpacing: 1,
-		lineHeight: 1,
-		space: true,
-		maxLength: '0',
-		gradient: false,
-		independentGradient: false,
-		transitionGradient: false,
-		env: 'node'
+		transitionGradient:['blue', 'cyan', 'mangenta' ],
+		gradient: ['blue', 'cyan', 'magenta' ],
+		lineHeight: 1  
 	});
 	
-	if(username) {
-		say(`Logged as "${username}"`, {
-			font: 'console',
-			align: 'center',
-			colors: ['red'],
-		});
-	}
+	CFonts.say(`Logged as ${username}`, {
+		font: 'console',
+		align: 'center',
+		colors: ['red'],
+	});
 	
 	menu("Menu")
 	
 	console.log("\x1b[35m","《1》 Show information","\x1b[0m")
 	console.log("\x1b[35m","《2》 Create information","\x1b[0m")
 	console.log("\x1b[35m","《3》 Delete information","\x1b[0m")
-	console.log("\x1b[35m","《4》 Exit\n","\x1b[0m")
+	console.log("\x1b[35m","《4》 Password Generator","\x1b[0m")
+	console.log("\x1b[35m","《5》 Exit\n","\x1b[0m")
 	
 	const setting = prompt("Select a option: ")
 	
@@ -43,7 +290,7 @@ function main(username) {
 			console.log("\x1b[35m","《1》 Passwords","\x1b[0m")
 			console.log("\x1b[35m","《2》 Notes","\x1b[0m")
 			console.log("\x1b[35m","《3》 Credit Cards","\x1b[0m")
-			console.log("\x1b[35m","《4》 Exit\n","\x1b[0m")
+			console.log("\x1b[35m","《4》 Back\n","\x1b[0m")
 	
 			var option = prompt("Select a option: ")
 
@@ -53,13 +300,13 @@ function main(username) {
 					menu("Passwords")
 					var title = prompt("Title of the password information you want to see: ")
 					if(!title) {
-						console.log("\x1b[31m","Title is required","\x1b[0m")
+						console.log("\x1b[31mInvalid parameters\x1b[0m")
 						redirectToMenu()
 					} else {
 						Passwords.findOne({title: title}, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
-								console.log("\x1b[31m","Password not found","\x1b[0m")
+								console.log("\x1b[31mPassword not found\x1b[0m")
 								redirectToMenu()
 							} else {
 								console.log(`Title: ${data.title}\nEmail: ${data.email}\nUsername: ${data.username}\nPassword: ${data.password}`)
@@ -74,13 +321,13 @@ function main(username) {
 					menu("Notes")
 					var title = prompt("Title of the note you want to see: ")
 					if(!title) {
-						console.log("\x1b[31m","Title is required","\x1b[0m")
+						console.log("\x1b[31mInvalid parameters\x1b[0m")
 						redirectToMenu()
 					} else {
 						Notes.findOne({title: title}, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
-								console.log("\x1b[31m","Note not found","\x1b[0m")
+								console.log("\x1b[31mNote not found\x1b[0m")
 								redirectToMenu()
 							} else {
 								console.log(`Title: ${data.title}\nNote: ${data.note}`)
@@ -95,13 +342,13 @@ function main(username) {
 					menu("Credit Cards")
 					var title = prompt("Title of the credit card information you want to see: ")
 					if(!title) {
-						console.log("\x1b[31m","Title is required","\x1b[0m")
+						console.log("\x1b[31mInvalid parameters\x1b[0m")
 						redirectToMenu()
 					} else {
 						CreditCards.findOne({title: title}, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
-								console.log("\x1b[31m","Credit card not found","\x1b[0m")
+								console.log("\x1b[31mCredit card not found\x1b[0m")
 								redirectToMenu()
 							} else {
 								console.log(`Title: ${data.title}\nCard Number: ${data.cardNumber}\nExpiration Date: ${data.expirationDate}\nCVV: ${data.cvv}`)
@@ -112,10 +359,10 @@ function main(username) {
 					}
 					break;
 				case "4":
-					console.log("\x1b[31m","Exiting...","\x1b[0m")
+					redirectToMenu()
 					break;
 				default:
-					console.log("\x1b[31m","Invalid option","\x1b[0m")
+					console.log("\x1b[31mInvalid option\x1b[0m")
 					redirectToMenu()
 					break;
 				}
@@ -139,16 +386,13 @@ function main(username) {
 					var user = prompt("What is your username: ")
 					var password = prompt("What is your password: ")
 					if(!title || !email || !user || !password) {
-						console.log("\x1b[31m","Please fill out all the required files","\x1b[0m")
-						redirectToMenu()
+						util("create", "password", false, "Invalid parameters")
 					} else {
 						Passwords.findOne({title: title }, async(err, data) => {
 							if(err) throw err;
 							if(data) {
-								console.log("\x1b[31m","Title already exist","\x1b[0m")
-								redirectToMenu()
+								util("create", "password", false, "Password title already exist")
 							} else {
-                                console.log("Saving information...")
                                 new Passwords({
                                     user: username,
                                     title,
@@ -157,8 +401,7 @@ function main(username) {
                                     password
                                 }).save()
                                 .then(() => {
-                                    console.log("\x1b[32m","Password created","\x1b[0m")
-                                    redirectToMenu()
+									util("create", "password", true)
                                 })
 							}
 						})
@@ -170,23 +413,19 @@ function main(username) {
 					var title = prompt("What will be your note title: ")
 					var note = prompt("What is your note: ")
 					if(!title || !note) {
-						console.log("\x1b[31m","Please fill out all the required files","\x1b[0m")
-						redirectToMenu()
+						util("create", "note", false, "Invalid parameters")
 					} else {
 						Notes.findOne({title: title }, async(err, data) => {
 							if(err) throw err;
 							if(data) {
-								console.log("\x1b[31m","Title already exist","\x1b[0m")
-								redirectToMenu()
+								util("create", "note", false, "Note title already exist")
 							} else {
-                                console.log("Saving information...")
                                 new Notes({
                                     title,
                                     note
                                 }).save()
                                 .then(() => {
-                                    console.log("\x1b[32m","Note created","\x1b[0m")
-                                    redirectToMenu()
+                                    util("create", "note", true)
                                 })
 							}
 						})
@@ -200,16 +439,14 @@ function main(username) {
 					var expire = prompt("What is your card expiration date: ")
 					var cvv = prompt("What is your card cvv: ")
 					if(!title || !number || !expire || !cvv) {
-						console.log("\x1b[31m","Please fill out all the required filess","\x1b[0m")
+						util("create", "credit card", false, "Invalid parameters")
 						redirectToMenu()
 					} else {
 						CreditCards.findOne({title: title }, async(err, data) => {
 							if(err) throw err;
 							if(data) {
-								console.log("\x1b[31m","Title already exist","\x1b[0m")
-								redirectToMenu()
+								util("create", "credit card", false, "CreditCard title already exist")
 							} else {
-                                console.log("Saving information...")
                                 new CreditCards({
                                     title,
                                     number,
@@ -217,18 +454,17 @@ function main(username) {
                                     cvv
                                 }).save()
                                 .then(() => {
-                                    console.log("\x1b[32m","Credit Card created","\x1b[0m")
-                                    redirectToMenu()
+                                    util("create", "credit card", true)
                                 })
 							}
 						})
 					}
 					break
 				case "4":
-					console.log("\x1b[31m","Exiting...","\x1b[0m")
+					redirectToMenu()
 					break;
 				default:
-					console.log("\x1b[31m","Invalid option","\x1b[0m")
+					console.log("\x1b[31mInvalid option\x1b[0m")
 					redirectToMenu()
 					break;
 				}
@@ -249,20 +485,16 @@ function main(username) {
 					menu("Password")
 					var title = prompt("Password title to delete: ")
 					if(!title) {
-						console.log("\x1b[31m","Title is required","\x1b[0m")
-						redirectToMenu()
+						util("delete", "password", false, "Invalid parameters")
 					} else {
 						Passwords.findOne({ title: title }, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
-								console.log("\x1b[31m","Title not found","\x1b[0m")
-								redirectToMenu()
+								util("delete", "password", false, "Password not found")
 							} else {
-                                console.log("Saving information...")
 								Passwords.deleteOne({ title: title })
 								.then(() => {
-									console.log("\x1b[32m","Password deleted","\x1b[0m")
-									redirectToMenu()
+									util("delete", "password", true)
 								})
 							}
 						})
@@ -271,22 +503,18 @@ function main(username) {
 				case "2":
 					console.clear()
 					menu("Note")
-					var title = prompt("Password title to delete: ")
+					var title = prompt("Note title to delete: ")
 					if(!title) {
-						console.log("\x1b[31m","Title is required","\x1b[0m")
-						redirectToMenu()
+						util("delete", "note", true, "Invalid parameters")
 					} else {
 						Notes.findOne({ title: title }, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
-								console.log("\x1b[31m","Title not found","\x1b[0m")
-								redirectToMenu()
+								util("delete", "password", false, "Note not found")
 							} else {
-                                console.log("Deleting information...")
-                                Note.deleteOne({ title: title })
+                                Notes.deleteOne({ title: title })
                                 .then(() => {
-                                    console.log("\x1b[32m","Note deleted","\x1b[0m")
-                                    redirectToMenu()
+                                    util("delete", "note", true)
                                 })
                             }
 						})
@@ -297,46 +525,86 @@ function main(username) {
 					menu("Credit Card")
 					var title = prompt("Password title to delete: ")
 					if(!title) {
-						console.log("\x1b[31m","Title is required","\x1b[0m")
-						redirectToMenu()
+						util("delete", "credit card", false, "Invalid parameters")
 					} else {
 						CreditCards.findOne({ title: title }, async(err, data) => {
 							if(err) throw err;
 							if(!data) {
-								console.log("\x1b[31m","Title not found","\x1b[0m")
-								redirectToMenu()
+								util("delete", "credit card", false, "CreditCard not found")
 							} else {
-                                console.log("Deleting information...")
                                 CreditCards.deleteOne({ title: title })
                                 .then(() => {
-                                    console.log("\x1b[32m","Credit Card deleted","\x1b[0m")
-                                    redirectToMenu()
+                                    util("delete", "credit card", true)
                                 })
                             }
 						})
 					}
 					break;
 				case "4":
-					console.log("\x1b[31m","Exiting...","\x1b[0m")
+					redirectToMenu()
 					break;
 				default:
-					console.log("\x1b[31m","Invalid option","\x1b[0m")
+					console.log("\x1b[31mInvalid option\x1b[0m")
 					redirectToMenu()
 					break;
 			}
 			break;
 		case "4":
-			console.log("\x1b[31m","Exiting...","\x1b[0m")
+			passGen();
 			break;
+		case "5":
+			console.log("\x1b[31mExiting...\x1b[0m")
+			process.exit()
 		default:
-			console.log("\x1b[31m","Invalid option","\x1b[0m")
+			console.log("\x1b[31mInvalid option\x1b[0m")
 			redirectToMenu()
 			break;
+	}
+	async function util(data, type, success, err) {
+		if(data == "create") {
+			const spinner = createSpinner('Saving information...').start();
+			await timeout(2000);
+	
+			if (success) {
+				spinner.success({ text: `Success! ${type} has been created.` });
+				redirectToMenu();
+			} else {
+				if (err) {
+					spinner.error({ text: `Error: ${err}` });
+					redirectToMenu();
+				} else {
+					spinner.error({ text: `Uh Oh! an unexpected error has ocurred, please try again later.` });
+					redirectToMenu();
+				}
+			}
+		} else if(data == "delete") {
+			const spinner = createSpinner('Deleting information...').start();
+			await timeout(2000);
+	
+			if (success) {
+				spinner.success({ text: `Success! ${type} has been deleted.` });
+				redirectToMenu();
+			} else {
+				if (err) {
+					spinner.error({ text: `Error: ${err}` });
+					redirectToMenu();
+				} else {
+					spinner.error({ text: `Uh Oh! an unexpected error has ocurred, please try again later.` });
+					redirectToMenu();
+				}
+			}
+		}
+	}
+}
+
+function timeout(ms) {
+	if (ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 }
 
 function menu(name) {
-	say(name, {
+	CFonts.say(name, {
 		font: 'chrome',
 		colors: ['cyan', 'yellow', '#ffa500'],
 		letterSpacing: 1,
@@ -346,16 +614,8 @@ function menu(name) {
 	});
 }
 
-function redirectToMenu() {
-	console.log("Redirecting to menu...")
-	setTimeout(() => {
-		console.clear();
-		main()
-	}, 3000)
-}
-
 module.exports = {
     main,
     menu,
-    redirectToMenu
+	timeout
 }
