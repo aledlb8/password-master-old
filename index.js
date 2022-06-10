@@ -1,7 +1,8 @@
 console.clear();
 const prompt = require("prompt-sync")({ sigint: true })
 const { User } = require("./database");
-const { main, menu, redirectToMenu } = require("./functions");
+const { main, menu, timeout } = require("./functions");
+const { createSpinner } = require('nanospinner');
 
 menu("Authenticate")
 console.log("\x1b[35m","《1》 Login","\x1b[0m")
@@ -17,21 +18,28 @@ switch (auth) {
 		var username = prompt("Username: ")
 		var password = prompt("Password: ")	
 		if(!username || !password) {
-			console.log("\x1b[31m","Please fill out all the required files","\x1b[0m")
-			process.exit();
+			system("login", false, "Invalid parameters")
 		} else {
-			User.findOne({username: username}, async(err, data) => {
+			User.findOne({ username: username }, async(err, data) => {
 				if(err) throw err;
 				if(!data) {
-					console.log("\x1b[31m","Username does not exist","\x1b[0m")
-					process.exit();
+					system("login", false, "Username not found")
 				} else {
-					if(password !== data.password) {
-						console.log("\x1b[31m","Wrong password","\x1b[0m")
-						process.exit();
+					const result = () => {
+						if(data.password === password) {
+							return true
+						} else {
+							return false
+						}
+					}
+					if(!result) {
+						system("login", false, "Invalid password")
 					} else {
-						console.log("Logged in")
-						main(username)
+						system("login", true)
+						.then(async() => {
+							await timeout(1000)
+							main(username)
+						})
 					}
 				}
 			})
@@ -43,23 +51,24 @@ switch (auth) {
 		var username = prompt("Username: ")
 		var password = prompt("Password: ")
 		if(!username || !password) {
-			console.log("\x1b[31m","Please fill out all the required files","\x1b[0m")
-			process.exit();
+			system("register", false, "Invalid parameters")
 		} else {
 			User.findOne({ username: username }, async(err, data) => {
 				if(err) throw err;
 				if(data) {
-					console.log("\x1b[31m","Username already exist","\x1b[0m")
-					process.exit();
+					system("register", false, "Username already exists")
 				} else {
 					new User({
 						username,
 						password
 					})
 					.save()
-					.then(() => {
-						console.log("Account registered")
-						main(username)
+					.then(async() => {
+						system("register", true)
+						.then(async() => {
+							await timeout(1000)
+							main(username)
+						})
 					})
 				}
 			})
@@ -73,8 +82,48 @@ switch (auth) {
 		break;
 }
 
+async function system(type, success, err) {
+	if(type == "login") {
+		const spinner = createSpinner('Logging in...').start();
+		await timeout(2000);
+
+		if (success) {
+			spinner.success({ text: `Success! you have logged in.` });
+			await timeout(1000)
+		} else {
+			if (err) {
+				spinner.error({ text: `Error: ${err}` });
+				await timeout(3000)
+				process.exit(1);
+			} else {
+				spinner.error({ text: `Uh Oh! an unexpected error has ocurred, please try again later.` });
+				await timeout(3000)
+				process.exit(1);
+			}
+		}
+	} else if(type == "register") {
+		const spinner = createSpinner('Registering...').start();
+		await timeout(2000);
+
+		if (success) {
+			spinner.success({ text: `Success! account has been registered.` });
+			await timeout(1000)
+		} else {
+			if (err) {
+				spinner.error({ text: `Error: ${err}` });
+				await timeout(3000)
+				process.exit(1);
+			} else {
+				spinner.error({ text: `Uh Oh! an unexpected error has ocurred, please try again later.` });
+				await timeout(3000)
+				process.exit(1);
+			}
+		}
+	}
+}
+
 /**
  * Password Master
  * @Author : aledlb8
- * @Version : 1.0.0
+ * @Version : 2.0.0
  */
