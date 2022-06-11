@@ -505,7 +505,7 @@ function main(username) {
 					menu("Note")
 					var title = prompt("Note title to delete: ")
 					if(!title) {
-						util("delete", "note", true, "Invalid parameters")
+						util("delete", "note", false, "Invalid parameters")
 					} else {
 						Notes.findOne({ title: title }, async(err, data) => {
 							if(err) throw err;
