@@ -25,14 +25,7 @@ switch (auth) {
 				if(!data) {
 					system("login", false, "Username not found")
 				} else {
-					const result = () => {
-						if(data.password === password) {
-							return true
-						} else {
-							return false
-						}
-					}
-					if(!result) {
+					if(password !== data.password) {
 						system("login", false, "Invalid password")
 					} else {
 						system("login", true)
@@ -75,10 +68,10 @@ switch (auth) {
 		}
 		break;
 	case "3":
-		console.log("\x1b[31m","Exiting...","\x1b[0m")
-		break;
+		console.log("\x1b[31mExiting...\x1b[0m")
+		process.exit()
 	default:
-		console.log("\x1b[31m","Invalid option","\x1b[0m")
+		console.log("\x1b[31mInvalid option\x1b[0m")
 		break;
 }
 
