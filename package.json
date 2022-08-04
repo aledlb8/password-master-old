@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/aledlb8/password-master#readme",
   "dependencies": {
-    "cfonts": "^2.10.0",
+    "cfonts": "^2.10.1",
     "mongoose": "^6.2.8",
     "prompt-sync": "^4.2.0"
   }
