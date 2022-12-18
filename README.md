@@ -1,7 +1,7 @@
 # **DEPRECATED**
 
 do not use this, is old and has a lot of issues
-please wait for us to release the latest version at https:://password-master.aledlb.com (soon)
+please wait for us to release the latest version at [(soon)](https://password-master.aledlb.com)
 
 # Password Master
 - What is this? is a free & open source project to save your passwords, notes & credit cards with a clean console UI with multiples features such as show information/create information/delete information
